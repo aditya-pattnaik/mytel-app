@@ -3,7 +3,7 @@ Built-By: aditya
 Build-Jdk: 15.0.1
 Implementation-Title: Call-Details-Microservice
 Implementation-Version: 0.0.1-SNAPSHOT
-Implementation-Vendor-Id: com.infosys.infytel
+Implementation-Vendor-Id: com.test.mytel
 Implementation-URL: https://projects.spring.io/spring-boot/#/spring-boot
  -starter-parent/CallDetailsMS
 Created-By: Maven Integration for Eclipse
