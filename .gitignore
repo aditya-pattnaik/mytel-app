@@ -1,1 +1,5 @@
 target/
+mytel-calldetails/target/
+mytel-customer/target/
+mytel-friend-family/target/
+mytel-plan/target/
