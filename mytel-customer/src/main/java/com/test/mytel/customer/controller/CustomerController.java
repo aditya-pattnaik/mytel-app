@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,12 +23,16 @@ import com.test.mytel.customer.service.CustomerService;
 
 @RestController
 @CrossOrigin
+@RibbonClient(name="custribbon")
 public class CustomerController {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	CustomerService custService;
+	
+	@Autowired
+	RestTemplate restTemplate;
 	
 	@Value("${friend.uri}")
 	String friendUri;
@@ -61,7 +66,7 @@ public class CustomerController {
 		custDTO.setCurrentPlan(planDTO);
 		
 		@SuppressWarnings("unchecked")
-		List<Long> friends=new RestTemplate().getForObject(friendUri+phoneNo+"/friends", List.class);
+		List<Long> friends=restTemplate.getForObject("http://custribbon/customers/"+phoneNo+"/friends", List.class);
 		custDTO.setFriendAndFamily(friends);
 		return custDTO;
 	}
