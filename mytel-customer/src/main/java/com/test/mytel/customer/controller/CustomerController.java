@@ -1,11 +1,14 @@
 package com.test.mytel.customer.controller;
 
+import java.net.URI;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,17 +33,7 @@ public class CustomerController {
 
 	@Autowired
 	CustomerService custService;
-	
-	@Autowired
-	RestTemplate restTemplate;
-	
-	@Value("${friend.uri}")
-	String friendUri;
 
-	@Value("${plan.uri}")
-	String planUri;
-
-	
 	// Create a new customer
 	@PostMapping(value = "/customers",  consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void createCustomer(@RequestBody CustomerDTO custDTO) {
@@ -62,11 +55,11 @@ public class CustomerController {
 		logger.info("Profile request for customer {}", phoneNo);
 		
 		CustomerDTO custDTO=custService.getCustomerProfile(phoneNo);
-		PlanDTO planDTO=new RestTemplate().getForObject(planUri+custDTO.getCurrentPlan().getPlanId(), PlanDTO.class);
+		PlanDTO planDTO=new RestTemplate().getForObject("http://PLANMS"+custDTO.getCurrentPlan().getPlanId(), PlanDTO.class);
 		custDTO.setCurrentPlan(planDTO);
 		
 		@SuppressWarnings("unchecked")
-		List<Long> friends=restTemplate.getForObject("http://custribbon/customers/"+phoneNo+"/friends", List.class);
+		List<Long> friends=new RestTemplate().getForObject("http://FRIENDFAMILYMS"+phoneNo+"/friends", List.class);
 		custDTO.setFriendAndFamily(friends);
 		return custDTO;
 	}
